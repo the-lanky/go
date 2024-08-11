@@ -8,11 +8,26 @@ import (
 	"encoding/json"
 )
 
+// LankyCrypto is an interface that defines the methods for performing cryptographic operations.
 type LankyCrypto interface {
+	// ToBytes converts the given data to a byte slice.
+	// It returns the byte slice representation of the data and an error if any occurred.
 	ToBytes(data any) ([]byte, error)
+
+	// Encrypt encrypts the given byte slice and returns the encryption as a string.
+	// It returns the encryption string and an error if any occurred.
 	Encrypt(data []byte) (encryption string, err error)
+
+	// EncryptToBytes encrypts the given byte slice and returns the encryption as a byte slice.
+	// It returns the encryption byte slice and an error if any occurred.
 	EncryptToBytes(data []byte) (encryption []byte, err error)
+
+	// Decrypt decrypts the given encryption string and returns the decrypted byte slice.
+	// It returns the decrypted byte slice and an error if any occurred.
 	Decrypt(encryption string) (result []byte, err error)
+
+	// DecryptFromBytes decrypts the given encryption byte slice and returns the decrypted byte slice.
+	// It returns the decrypted byte slice and an error if any occurred.
 	DecryptFromBytes(encryption []byte) (result []byte, err error)
 }
 
@@ -21,6 +36,15 @@ type lc struct {
 	size   []byte
 }
 
+// NewLankyCrypto creates a new instance of LankyCrypto with the given secret.
+// It generates a random 16-byte block and initializes the LankyCrypto instance
+// with the secret and the generated block.
+//
+// Parameters:
+//   - secret: The secret used for encryption.
+//
+// Returns:
+//   - LankyCrypto: A new instance of LankyCrypto.
 func NewLankyCrypto(secret string) LankyCrypto {
 	blockBytes := make([]byte, 16)
 	rand.Read(blockBytes)
@@ -80,10 +104,16 @@ func (c *lc) DecryptFromBytes(encryption []byte) ([]byte, error) {
 	return dcr, nil
 }
 
+// encode encodes the given byte slice using base64 encoding and returns the encoded string.
+// It takes a byte slice as input and returns a string.
 func (c *lc) encode(src []byte) string {
 	return base64.StdEncoding.EncodeToString(src)
 }
 
+// decode decodes a base64 encoded string and returns the decoded byte slice.
+// It takes a string as input and returns a byte slice and an error.
+// If the decoding is successful, the error will be nil.
+// If an error occurs during decoding, the error will be non-nil.s
 func (c *lc) decode(str string) ([]byte, error) {
 	return base64.StdEncoding.DecodeString(str)
 }

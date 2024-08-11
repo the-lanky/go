@@ -16,18 +16,30 @@ import (
 	glog "gorm.io/gorm/logger"
 )
 
+// LankyPostgreDb is an interface that represents a connection to a PostgreSQL database.
 type LankyPostgreDb interface {
+	// Db returns the underlying *gorm.DB instance.
 	Db() *gorm.DB
+
+	// Sql returns the underlying *sql.DB instance.
 	Sql() *sql.DB
+
+	// Close closes the database connection.
 	Close()
 }
 
+// postgre represents a PostgreSQL database connection.
 type postgre struct {
-	db    *gorm.DB
-	sqlDb *sql.DB
-	log   *logrus.Logger
+	db    *gorm.DB       // The GORM database connection.
+	sqlDb *sql.DB        // The SQL database connection.
+	log   *logrus.Logger // The logger instance for logging.
 }
 
+// NewLankyPostgre creates a new instance of LankyPostgreDb with the given configuration.
+// It establishes a connection to the PostgreSQL database using the provided configuration parameters.
+// If the logger parameter is nil, a default logger instance will be created.
+// The isProduction parameter determines the log level for the connection.
+// The function returns a pointer to the LankyPostgreDb interface.
 func NewLankyPostgre(conf llt.LankyPostgreConf, isProduction bool, logger *logrus.Logger) LankyPostgreDb {
 	if logger == nil {
 		logger = llog.NewInstance(
